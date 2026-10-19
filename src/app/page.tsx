@@ -1,69 +1,131 @@
-import Image from "next/image";
+import Link from "next/link";
+import { connection } from "next/server";
+import { Suspense } from "react";
+import { APP_EMOJI, APP_NAME, APP_TAGLINE } from "@/lib/brand";
+import { getSession } from "@/lib/session";
 
-export default function Home() {
+const ERRORS: Record<string, string> = {
+  access_denied: "Connexion annulée sur Strava.",
+  invalid_state: "Session de connexion expirée, réessaie.",
+  missing_code: "Strava n'a pas renvoyé de code d'autorisation.",
+  missing_scope: "Il faut autoriser l'accès à tes activités pour générer le récap.",
+  token_exchange: "Échec de la connexion avec Strava.",
+  config: "L'app n'est pas configurée (STRAVA_CLIENT_ID manquant, voir .env.example).",
+};
+
+const DEMOS = [
+  { id: "marathoner", label: "Le Marathonien", emoji: "🏃" },
+  { id: "trail", label: "La Traileuse", emoji: "⛰️" },
+  { id: "commuter", label: "Le Vélotafeur", emoji: "🚲" },
+];
+
+export default function Home({ searchParams }: PageProps<"/">) {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="relative mx-auto flex min-h-dvh max-w-md flex-col justify-between overflow-hidden bg-ink px-6 py-10 text-center">
+      <div aria-hidden className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-strava/30 blur-3xl" />
+      <div aria-hidden className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-purple-600/20 blur-3xl" />
+
+      <header className="relative z-10 mt-8">
+        <span className="inline-block rounded-full border border-strava/40 bg-strava/20 px-3 py-1 text-xs font-extrabold uppercase tracking-widest text-strava">
+          {APP_EMOJI} {APP_NAME}
+        </span>
+        <h1 className="mt-4 text-5xl font-extrabold italic leading-none tracking-tight">
+          TON ANNÉE
+          <br />
+          <span className="text-gradient-strava text-6xl">EN MOUVEMENT</span>
+        </h1>
+        <p className="mt-4 text-base font-bold text-white/90">{APP_TAGLINE}</p>
+        <p className="mt-2 text-sm text-white/70">
+          Connecte ton compte Strava : on analyse tes activités et on te sert ton récap façon story, prêt à partager.
+        </p>
+      </header>
+
+      <Suspense fallback={<div className="my-10 h-64 animate-pulse rounded-2xl bg-white/5" />}>
+        <Actions searchParams={searchParams} />
+      </Suspense>
+
+      <footer className="relative z-10 space-y-1 text-[11px] text-white/40">
+        <p className="font-bold uppercase tracking-widest">Powered by Strava</p>
+        <p>Tes données sont lues à la volée et ne sont jamais stockées.</p>
+      </footer>
+    </main>
+  );
+}
+
+/** Dynamic part (cookies + search params), streamed inside a Suspense boundary. */
+async function Actions({ searchParams }: Pick<PageProps<"/">, "searchParams">) {
+  const { error } = await searchParams;
+  const session = await getSession();
+  // Current year depends on request time: opt out of prerendering explicitly.
+  await connection();
+  const year = new Date().getFullYear();
+  const years = [year, year - 1, year - 2];
+  const errorMessage = typeof error === "string" ? ERRORS[error] : undefined;
+
+  return (
+    <section className="relative z-10 my-10 space-y-4">
+      {errorMessage && (
+        <p role="alert" className="rounded-2xl border border-red-500/40 bg-red-500/15 p-3 text-sm font-semibold text-red-200">
+          {errorMessage}
+        </p>
+      )}
+
+      {session ? (
+        <div className="space-y-3">
+          <p className="text-xs font-bold uppercase tracking-widest text-white/60">Choisis ton année</p>
+          <div className="grid grid-cols-3 gap-2">
+            {years.map((y) => (
+              <Link
+                key={y}
+                href={`/wrapped?year=${y}`}
+                className="rounded-2xl bg-strava py-4 text-lg font-extrabold shadow-lg shadow-strava/30 transition hover:bg-strava-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              >
+                {y}
+              </Link>
+            ))}
+          </div>
+          <form action="/api/auth/logout" method="post">
+            <button type="submit" className="text-xs text-white/50 underline underline-offset-4 hover:text-white">
+              Se déconnecter et révoquer l&apos;accès Strava
+            </button>
+          </form>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      ) : (
+        // Strava brand guidelines: use the official orange "Connect with Strava" button.
+        <a
+          href="/api/auth/strava"
+          className="flex w-full items-center justify-center gap-3 rounded-2xl bg-strava py-4 text-sm font-extrabold uppercase tracking-wider shadow-lg shadow-strava/40 transition hover:bg-strava-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        >
+          <StravaLogo />
+          Se connecter avec Strava
+        </a>
+      )}
+
+      <div className="glass-light rounded-2xl p-4">
+        <p className="mb-3 text-xs font-bold uppercase tracking-widest text-white/60">Ou essaie un profil démo</p>
+        <div className="grid grid-cols-3 gap-2">
+          {DEMOS.map((d) => (
+            <Link
+              key={d.id}
+              href={`/wrapped?demo=${d.id}&year=${year}`}
+              className="rounded-xl border border-white/10 bg-white/5 p-2.5 text-xs font-bold transition hover:border-strava"
+            >
+              <span className="mb-1 block text-xl" aria-hidden>
+                {d.emoji}
+              </span>
+              {d.label}
+            </Link>
+          ))}
         </div>
-      </main>
-    </div>
+      </div>
+    </section>
+  );
+}
+
+function StravaLogo() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5 fill-white" aria-hidden>
+      <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169" />
+    </svg>
   );
 }

@@ -1,26 +1,95 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  --color-strava: #fc4c02;
+  --color-strava-dark: #e03d00;
+  --color-ink: #0f0f12;
+  --color-neon-green: #00ff66;
+  --color-neon-yellow: #ffe600;
+  --color-neon-cyan: #00f0ff;
+  --color-neon-pink: #ff2d7a;
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --animate-float: float 4s ease-in-out infinite;
+  --animate-spin-slow: spin 12s linear infinite;
+  --animate-pop: pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  --animate-rise: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  @keyframes pop {
+    from { opacity: 0; transform: scale(0.6); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 }
 
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #08080a;
+  color: #fff;
 }
+
+.glass {
+  background: rgba(26, 26, 30, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.glass-light {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.text-gradient-strava {
+  background: linear-gradient(135deg, #ff6b00 0%, #fc4c02 50%, #ff0055 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, #ffe600 0%, #ff9900 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Story progress bar: a CSS animation we can pause/resume for free. */
+@keyframes story-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.story-fill {
+  transform-origin: left;
+  animation-name: story-fill;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+/* Staggered entrance animations only on the active slide. */
+.slide:not([data-active="true"]) .animate-rise,
+.slide:not([data-active="true"]) .animate-pop {
+  animation: none;
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .story-fill { animation-duration: 7s !important; }
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
