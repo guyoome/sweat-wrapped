@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { env } from "@/lib/env";
 import { clearSession, getSession, saveSession } from "@/lib/session";
 import { refreshIfNeeded, StravaError } from "@/lib/strava/client";
 import { computeWrapped } from "@/lib/wrapped/compute";
@@ -15,6 +16,10 @@ import { buildWrappedForAthlete, parseYear } from "@/lib/wrapped/service";
 export async function GET(request: NextRequest) {
   const year = parseYear(request.nextUrl.searchParams.get("year"));
   const demo = request.nextUrl.searchParams.get("demo") ?? undefined;
+
+  if (demo !== undefined && !env.demoEnabled) {
+    return NextResponse.json({ error: "Profil démo indisponible." }, { status: 404 });
+  }
 
   if (isDemoPreset(demo)) {
     const { athlete, activities } = generateDemoYear(demo, year);

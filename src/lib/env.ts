@@ -28,4 +28,8 @@ export const env = {
   get isProd() {
     return process.env.NODE_ENV === "production";
   },
+  /** Demo profiles are a dev-only tool: hidden and disabled in production. */
+  get demoEnabled() {
+    return process.env.NODE_ENV !== "production";
+  },
 };

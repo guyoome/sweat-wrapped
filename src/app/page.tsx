@@ -2,6 +2,7 @@ import Link from "next/link";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { APP_EMOJI, APP_NAME, APP_TAGLINE } from "@/lib/brand";
+import { env } from "@/lib/env";
 import { getSession } from "@/lib/session";
 
 const ERRORS: Record<string, string> = {
@@ -101,23 +102,25 @@ async function Actions({ searchParams }: Pick<PageProps<"/">, "searchParams">) {
         </a>
       )}
 
-      <div className="glass-light rounded-2xl p-4">
-        <p className="mb-3 text-xs font-bold uppercase tracking-widest text-white/60">Ou essaie un profil démo</p>
-        <div className="grid grid-cols-3 gap-2">
-          {DEMOS.map((d) => (
-            <Link
-              key={d.id}
-              href={`/wrapped?demo=${d.id}&year=${year}`}
-              className="rounded-xl border border-white/10 bg-white/5 p-2.5 text-xs font-bold transition hover:border-strava"
-            >
-              <span className="mb-1 block text-xl" aria-hidden>
-                {d.emoji}
-              </span>
-              {d.label}
-            </Link>
-          ))}
+      {env.demoEnabled && (
+        <div className="glass-light rounded-2xl p-4">
+          <p className="mb-3 text-xs font-bold uppercase tracking-widest text-white/60">Ou essaie un profil démo</p>
+          <div className="grid grid-cols-3 gap-2">
+            {DEMOS.map((d) => (
+              <Link
+                key={d.id}
+                href={`/wrapped?demo=${d.id}&year=${year}`}
+                className="rounded-xl border border-white/10 bg-white/5 p-2.5 text-xs font-bold transition hover:border-strava"
+              >
+                <span className="mb-1 block text-xl" aria-hidden>
+                  {d.emoji}
+                </span>
+                {d.label}
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </section>
   );
 }
