@@ -275,7 +275,8 @@ export function computeWrapped(
       })(),
       biggestClimb: (() => {
         const a = maxBy(activities, (x) => x.total_elevation_gain);
-        return a ? highlight(a) : null;
+        // Swimmers (pool) have no elevation: skip a meaningless "+0 m" record.
+        return a && a.total_elevation_gain > 0 ? highlight(a) : null;
       })(),
       fastestRun: (() => {
         const a = maxBy(runs, (x) => x.average_speed);
