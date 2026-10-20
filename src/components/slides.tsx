@@ -37,14 +37,18 @@ function Shell({ kicker, title, kickerClass = "text-strava", children, footer, g
   glow?: string;
 }) {
   return (
-    <div className="relative flex h-full flex-col justify-between p-6">
-      {glow && <div aria-hidden className={`absolute right-[-5rem] top-1/3 h-72 w-72 rounded-full blur-3xl ${glow}`} />}
-      <header className="relative z-10 mt-16 animate-rise">
-        <h2 className={`mb-1 text-xs font-extrabold uppercase tracking-widest ${kickerClass}`}>{kicker}</h2>
-        <h3 className="text-3xl font-extrabold italic leading-tight">{title}</h3>
-      </header>
-      <div className="relative z-10 my-auto py-4">{children}</div>
-      {footer && <footer className="relative z-10 mb-4 text-center text-xs text-white/60">{footer}</footer>}
+    // Mobile: stacked column. Desktop (`desktop:` variant): title + footer on the left, content on the right.
+    // The wrapper is `display: contents` on mobile so header/footer stay direct flex items.
+    <div className="relative flex h-full flex-col justify-between p-6 desktop:grid desktop:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] desktop:items-center desktop:gap-16 desktop:px-20 desktop:pb-12 desktop:pt-24">
+      {glow && <div aria-hidden className={`absolute right-[-5rem] top-1/3 h-72 w-72 rounded-full blur-3xl desktop:h-[28rem] desktop:w-[28rem] ${glow}`} />}
+      <div className="contents desktop:relative desktop:z-10 desktop:flex desktop:flex-col desktop:gap-6">
+        <header className="relative z-10 mt-16 animate-rise desktop:mt-0">
+          <h2 className={`mb-1 text-xs font-extrabold uppercase tracking-widest desktop:mb-3 desktop:text-sm ${kickerClass}`}>{kicker}</h2>
+          <h3 className="text-3xl font-extrabold italic leading-tight desktop:text-5xl">{title}</h3>
+        </header>
+        {footer && <footer className="relative z-10 order-last mb-4 text-center text-xs text-white/60 desktop:order-none desktop:mb-0 desktop:text-left desktop:text-sm">{footer}</footer>}
+      </div>
+      <div className="relative z-10 my-auto py-4 desktop:my-0">{children}</div>
     </div>
   );
 }
@@ -96,40 +100,40 @@ function Pill({ emoji, label, value, style }: { emoji: string; label: string; va
 
 function IntroSlide({ data, onNext }: SlideProps) {
   return (
-    <div className="relative flex h-full flex-col items-center justify-between p-6 text-center">
-      <div aria-hidden className="absolute -left-20 -top-20 h-64 w-64 animate-pulse rounded-full bg-strava/30 blur-3xl" />
-      <div aria-hidden className="absolute -bottom-20 -right-20 h-64 w-64 animate-pulse rounded-full bg-purple-600/20 blur-3xl" />
+    <div className="relative flex h-full flex-col items-center justify-between p-6 text-center desktop:grid desktop:grid-cols-2 desktop:grid-rows-[auto_auto] desktop:content-center desktop:items-center desktop:gap-x-16 desktop:gap-y-10 desktop:px-20 desktop:text-left">
+      <div aria-hidden className="absolute -left-20 -top-20 h-64 w-64 animate-pulse rounded-full bg-strava/30 blur-3xl desktop:h-[28rem] desktop:w-[28rem]" />
+      <div aria-hidden className="absolute -bottom-20 -right-20 h-64 w-64 animate-pulse rounded-full bg-purple-600/20 blur-3xl desktop:h-[28rem] desktop:w-[28rem]" />
 
-      <div className="z-10 mt-20 animate-rise">
+      <div className="z-10 mt-20 animate-rise desktop:col-start-1 desktop:row-start-1 desktop:mt-0 desktop:self-end">
         <span className="mb-4 inline-block rounded-full border border-strava/40 bg-strava/20 px-3 py-1 text-xs font-extrabold uppercase tracking-widest text-strava">
           {data.isDemo ? "Profil démo" : "Rétrospective annuelle"}
         </span>
-        <h1 className="mb-2 text-5xl font-extrabold italic leading-none tracking-tight">
+        <h1 className="mb-2 text-5xl font-extrabold italic leading-none tracking-tight desktop:text-7xl">
           TON ANNÉE
           <br />
-          <span className="text-gradient-strava text-6xl">SPORTIVE</span>
+          <span className="text-gradient-strava text-6xl desktop:text-8xl">SPORTIVE</span>
         </h1>
-        <p className="text-3xl font-extrabold italic tracking-wider text-white/90">{data.year}</p>
+        <p className="text-3xl font-extrabold italic tracking-wider text-white/90 desktop:text-4xl">{data.year}</p>
       </div>
 
-      <div className="relative z-10 flex animate-pop items-center justify-center" style={delay(200)}>
-        <div className="h-48 w-48 animate-spin-slow rounded-full bg-gradient-to-tr from-strava via-orange-400 to-yellow-300 p-1">
+      <div className="relative z-10 flex animate-pop items-center justify-center desktop:col-start-2 desktop:row-span-2 desktop:row-start-1" style={delay(200)}>
+        <div className="h-48 w-48 animate-spin-slow rounded-full bg-gradient-to-tr from-strava via-orange-400 to-yellow-300 p-1 desktop:h-80 desktop:w-80">
           <div className="h-full w-full rounded-full bg-ink" />
         </div>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           {data.athlete.avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element -- remote Strava CDN avatar
-            <img src={data.athlete.avatarUrl} alt="" className="h-28 w-28 rounded-full object-cover" />
+            <img src={data.athlete.avatarUrl} alt="" className="h-28 w-28 rounded-full object-cover desktop:h-48 desktop:w-48" />
           ) : (
-            <span className="animate-float text-6xl drop-shadow-[0_0_20px_rgba(252,76,2,0.8)]" aria-hidden>
+            <span className="animate-float text-6xl drop-shadow-[0_0_20px_rgba(252,76,2,0.8)] desktop:text-8xl" aria-hidden>
               🔥
             </span>
           )}
-          <span className="mt-2 text-sm font-bold text-white/80">{data.athlete.handle}</span>
+          <span className="mt-2 text-sm font-bold text-white/80 desktop:text-base">{data.athlete.handle}</span>
         </div>
       </div>
 
-      <div className="z-10 mb-8 w-full animate-rise" style={delay(400)}>
+      <div className="z-10 mb-8 w-full animate-rise desktop:col-start-1 desktop:row-start-2 desktop:mb-0 desktop:max-w-md desktop:self-start" style={delay(400)}>
         <p className="glass-light mb-4 rounded-2xl p-4 text-sm font-medium text-white/80">
           {data.athlete.name.split(" ")[0]}, prêt·e à revoir tes exploits, tes sueurs et tes Kudos de {data.year} ?
         </p>
@@ -191,15 +195,15 @@ function SportsSlide({ data, active }: SlideProps) {
   const top = data.sports[0];
   return (
     <Shell kicker="Diversité d'effort" title="TES DISCIPLINES" kickerClass="text-neon-cyan">
-      <div className="glass flex animate-rise flex-col items-center rounded-3xl p-5">
-        <div className="relative">
+      <div className="glass flex animate-rise flex-col items-center rounded-3xl p-5 desktop:flex-row desktop:gap-8 desktop:p-8">
+        <div className="relative shrink-0">
           <Donut sports={sports} active={active} />
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className="text-3xl font-extrabold">{data.sports.length}</span>
             <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">sport{data.sports.length > 1 ? "s" : ""}</span>
           </div>
         </div>
-        <ul className="mt-5 w-full space-y-2">
+        <ul className="mt-5 w-full space-y-2 desktop:mt-0">
           {sports.map((s, i) => (
             <li key={s.sportType} className="flex items-center justify-between text-sm">
               <span className="flex items-center gap-2 font-semibold">
@@ -245,7 +249,7 @@ function RoutineSlide({ data }: SlideProps) {
           Pic de forme en <strong className="text-strava">{routine.favoriteMonth.label}</strong> ({routine.favoriteMonth.count} activités)
         </p>
       </div>
-      <div className="mt-4 grid grid-cols-2 gap-3">
+      <div className="mt-4 grid grid-cols-2 gap-3 desktop:grid-cols-4">
         <Pill emoji={routine.timeSlot.emoji} label="Ton créneau" value={`${routine.timeSlot.label} · ${Math.round(routine.timeSlot.percent)}%`} style={delay(150)} />
         <Pill emoji="📅" label="Jour sacré" value={routine.favoriteWeekday.label} style={delay(250)} />
         <Pill emoji="🔥" label="Plus longue série" value={`${routine.longestStreakDays} jours d'affilée`} style={delay(350)} />
@@ -348,13 +352,13 @@ function FunSlide({ data }: SlideProps) {
 function PersonaSlide({ data, onNext }: SlideProps) {
   const { persona, traits } = data;
   return (
-    <div className="flex h-full flex-col justify-between p-6">
-      <header className="mt-16 animate-rise text-center">
-        <h2 className="mb-1 text-xs font-extrabold uppercase tracking-widest text-neon-yellow">Analyse de profil</h2>
-        <h3 className="text-2xl font-extrabold italic">TON PERSONA SPORTIF</h3>
+    <div className="flex h-full flex-col justify-between p-6 desktop:grid desktop:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] desktop:grid-rows-[auto_auto] desktop:content-center desktop:gap-x-16 desktop:gap-y-8 desktop:px-20 desktop:pt-24">
+      <header className="mt-16 animate-rise text-center desktop:col-start-1 desktop:row-start-1 desktop:mt-0 desktop:self-end desktop:text-left">
+        <h2 className="mb-1 text-xs font-extrabold uppercase tracking-widest text-neon-yellow desktop:mb-3 desktop:text-sm">Analyse de profil</h2>
+        <h3 className="text-2xl font-extrabold italic desktop:text-5xl">TON PERSONA SPORTIF</h3>
       </header>
 
-      <div className="glass relative my-auto overflow-hidden rounded-3xl border border-neon-yellow/30 p-6 text-center">
+      <div className="glass relative my-auto overflow-hidden rounded-3xl border border-neon-yellow/30 p-6 text-center desktop:col-start-2 desktop:row-span-2 desktop:row-start-1 desktop:my-0 desktop:p-10">
         <div aria-hidden className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-neon-yellow/10 blur-2xl" />
         <div className={`mx-auto mb-4 flex h-24 w-24 animate-pop items-center justify-center rounded-2xl bg-gradient-to-tr ${persona.gradient} text-5xl shadow-lg`} style={delay(200)}>
           <span aria-hidden>{persona.emoji}</span>
@@ -377,7 +381,7 @@ function PersonaSlide({ data, onNext }: SlideProps) {
         )}
       </div>
 
-      <button type="button" onClick={onNext} className="mb-6 w-full rounded-2xl bg-white py-4 text-sm font-extrabold uppercase tracking-wider text-black transition hover:bg-white/90">
+      <button type="button" onClick={onNext} className="mb-6 w-full rounded-2xl bg-white desktop:col-start-1 desktop:row-start-2 desktop:mb-0 desktop:max-w-sm desktop:self-start py-4 text-sm font-extrabold uppercase tracking-wider text-black transition hover:bg-white/90">
         Voir ma carte récap →
       </button>
     </div>
@@ -427,20 +431,24 @@ function ShareSlide({ data, active }: SlideProps) {
   }
 
   return (
-    <div className="flex h-full flex-col items-center justify-between p-4 pt-16">
-      <header className="animate-rise text-center">
-        <h2 className="text-xs font-extrabold uppercase tracking-widest text-strava">Carte de fin d&apos;année</h2>
-        <h3 className="text-2xl font-extrabold italic">PRÊT À PARTAGER !</h3>
+    <div className="flex h-full flex-col items-center justify-between p-4 pt-16 desktop:grid desktop:grid-cols-2 desktop:grid-rows-[auto_auto] desktop:content-center desktop:gap-x-16 desktop:gap-y-8 desktop:px-20 desktop:pt-20">
+      <header className="animate-rise text-center desktop:col-start-1 desktop:row-start-1 desktop:self-end desktop:justify-self-end desktop:text-right">
+        <h2 className="text-xs font-extrabold uppercase tracking-widest text-strava desktop:mb-3 desktop:text-sm">Carte de fin d&apos;année</h2>
+        <h3 className="text-2xl font-extrabold italic desktop:text-5xl">PRÊT À PARTAGER !</h3>
+        <p className="mt-4 hidden max-w-sm text-sm text-white/60 desktop:block">Télécharge ta carte en haute définition et poste-la en story.</p>
       </header>
 
       {/* Visual scale only: the export uses the unscaled 360x640 node. */}
-      <div className="flex h-[470px] w-[265px] items-start justify-center" aria-label="Aperçu de la carte récapitulative">
-        <div className="origin-top scale-[0.735]">
+      <div
+        className="flex h-[470px] w-[265px] items-start justify-center desktop:col-start-2 desktop:row-span-2 desktop:row-start-1 desktop:h-[576px] desktop:w-[324px]"
+        aria-label="Aperçu de la carte récapitulative"
+      >
+        <div className="origin-top scale-[0.735] desktop:scale-90">
           <ShareCard ref={cardRef} data={data} />
         </div>
       </div>
 
-      <div className="w-full space-y-2 pb-4">
+      <div className="w-full space-y-2 pb-4 desktop:col-start-1 desktop:row-start-2 desktop:max-w-sm desktop:self-start desktop:justify-self-end desktop:pb-0">
         <button
           type="button"
           onClick={handleShare}

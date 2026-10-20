@@ -21,30 +21,30 @@ const DEMOS = [
 
 export default function Home({ searchParams }: PageProps<"/">) {
   return (
-    <main className="relative mx-auto flex min-h-dvh max-w-md flex-col justify-between overflow-hidden bg-ink px-6 py-10 text-center">
-      <div aria-hidden className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-strava/30 blur-3xl" />
-      <div aria-hidden className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-purple-600/20 blur-3xl" />
+    <main className="relative mx-auto flex min-h-dvh max-w-md flex-col justify-between overflow-hidden bg-ink px-6 py-10 text-center desktop:grid desktop:max-w-none desktop:grid-cols-[minmax(0,1fr)_minmax(0,28rem)] desktop:grid-rows-[auto_auto] desktop:content-center desktop:gap-x-24 desktop:gap-y-10 desktop:px-[max(4rem,calc((100vw-72rem)/2))] desktop:text-left">
+      <div aria-hidden className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-strava/30 blur-3xl desktop:h-[36rem] desktop:w-[36rem]" />
+      <div aria-hidden className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-purple-600/20 blur-3xl desktop:h-[36rem] desktop:w-[36rem]" />
 
-      <header className="relative z-10 mt-8">
+      <header className="relative z-10 mt-8 desktop:col-start-1 desktop:row-start-1 desktop:mt-0 desktop:self-end">
         <span className="inline-block rounded-full border border-strava/40 bg-strava/20 px-3 py-1 text-xs font-extrabold uppercase tracking-widest text-strava">
           {APP_EMOJI} {APP_NAME}
         </span>
-        <h1 className="mt-4 text-5xl font-extrabold italic leading-none tracking-tight">
+        <h1 className="mt-4 text-5xl font-extrabold italic leading-none tracking-tight desktop:mt-6 desktop:text-7xl">
           TON ANNÉE
           <br />
-          <span className="text-gradient-strava text-6xl">EN MOUVEMENT</span>
+          <span className="text-gradient-strava text-6xl desktop:text-8xl">EN MOUVEMENT</span>
         </h1>
-        <p className="mt-4 text-base font-bold text-white/90">{APP_TAGLINE}</p>
-        <p className="mt-2 text-sm text-white/70">
+        <p className="mt-4 text-base font-bold text-white/90 desktop:mt-6 desktop:text-xl">{APP_TAGLINE}</p>
+        <p className="mt-2 text-sm text-white/70 desktop:max-w-lg desktop:text-base">
           Connecte ton compte Strava : on analyse tes activités et on te sert ton récap façon story, prêt à partager.
         </p>
       </header>
 
-      <Suspense fallback={<div className="my-10 h-64 animate-pulse rounded-2xl bg-white/5" />}>
+      <Suspense fallback={<div className="my-10 h-64 animate-pulse rounded-2xl bg-white/5 desktop:col-start-2 desktop:row-span-2 desktop:row-start-1 desktop:my-0" />}>
         <Actions searchParams={searchParams} />
       </Suspense>
 
-      <footer className="relative z-10 space-y-1 text-[11px] text-white/40">
+      <footer className="relative z-10 space-y-1 text-[11px] text-white/40 desktop:col-start-1 desktop:row-start-2 desktop:self-start">
         <p className="font-bold uppercase tracking-widest">Powered by Strava</p>
         <p>Tes données sont lues à la volée et ne sont jamais stockées.</p>
       </footer>
@@ -63,7 +63,7 @@ async function Actions({ searchParams }: Pick<PageProps<"/">, "searchParams">) {
   const errorMessage = typeof error === "string" ? ERRORS[error] : undefined;
 
   return (
-    <section className="relative z-10 my-10 space-y-4">
+    <section className="relative z-10 my-10 space-y-4 desktop:glass desktop:col-start-2 desktop:row-span-2 desktop:row-start-1 desktop:my-0 desktop:rounded-3xl desktop:p-8">
       {errorMessage && (
         <p role="alert" className="rounded-2xl border border-red-500/40 bg-red-500/15 p-3 text-sm font-semibold text-red-200">
           {errorMessage}

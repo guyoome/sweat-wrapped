@@ -112,15 +112,15 @@ export function StoryPlayer({ data }: { data: WrappedData }) {
   const current = slides[index];
 
   return (
-    <main className="flex h-dvh items-center justify-center bg-[#08080a] sm:p-4">
+    <main className="flex h-dvh flex-col items-center justify-center gap-3 bg-[#08080a] framed:p-4 desktop:p-8">
       <div
-        className="relative h-full w-full max-w-md select-none overflow-hidden bg-ink shadow-2xl sm:h-[844px] sm:rounded-[40px] sm:border-8 sm:border-[#1E1E24]"
+        className="relative h-full w-full max-w-md select-none overflow-hidden bg-ink shadow-2xl framed:h-[844px] framed:rounded-[40px] framed:border-8 framed:border-[#1E1E24] desktop:h-[min(760px,calc(100dvh-6rem))] desktop:max-w-6xl desktop:rounded-[32px] desktop:border desktop:border-white/10"
         role="region"
         aria-roledescription="carrousel"
         aria-label={`Récap ${data.year}`}
       >
         {/* Progress bars + controls */}
-        <div className="absolute inset-x-0 top-0 z-30 bg-gradient-to-b from-black/80 via-black/40 to-transparent p-4 pt-5">
+        <div className="absolute inset-x-0 top-0 z-30 bg-gradient-to-b from-black/80 via-black/40 to-transparent p-4 pt-5 desktop:px-8 desktop:pt-6">
           <div className="mb-3 flex gap-1.5">
             {slides.map((s, i) => (
               <button
@@ -185,9 +185,38 @@ export function StoryPlayer({ data }: { data: WrappedData }) {
             );
           })}
         </div>
+
+        {/* Desktop: explicit prev/next arrows (no tap zones with a mouse). */}
+        <NavArrow side="left" label="Diapositive précédente" disabled={index === 0} onClick={prev} />
+        <NavArrow side="right" label="Diapositive suivante" disabled={index === slides.length - 1} onClick={next} />
       </div>
+
+      <p className="hidden text-xs text-white/40 desktop:block">
+        <Kbd>←</Kbd> <Kbd>→</Kbd> pour naviguer · <Kbd>Espace</Kbd> pour mettre en pause
+      </p>
     </main>
   );
+}
+
+function NavArrow({ side, label, disabled, onClick }: { side: "left" | "right"; label: string; disabled: boolean; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={label}
+      title={label}
+      className={`absolute top-1/2 z-30 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-xl backdrop-blur-md transition hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-white disabled:pointer-events-none disabled:opacity-0 desktop:flex ${
+        side === "left" ? "left-4" : "right-4"
+      }`}
+    >
+      <span aria-hidden>{side === "left" ? "‹" : "›"}</span>
+    </button>
+  );
+}
+
+function Kbd({ children }: { children: React.ReactNode }) {
+  return <kbd className="rounded border border-white/15 bg-white/5 px-1.5 py-0.5 font-sans text-[10px] font-bold text-white/60">{children}</kbd>;
 }
 
 function ControlButton({ label, onClick, children }: { label: string; onClick: () => void; children: React.ReactNode }) {

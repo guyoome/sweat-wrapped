@@ -35,14 +35,24 @@ body {
   color: #fff;
 }
 
-.glass {
+/*
+ * Layout variants gated on a mouse/trackpad, so touch tablets (even ≥1024px
+ * in landscape) keep the full-screen mobile display.
+ * - framed:  phone-frame mockup for narrow desktop windows
+ * - desktop: wide two-column layout
+ */
+@custom-variant framed (@media (min-width: 40rem) and (hover: hover) and (pointer: fine));
+@custom-variant desktop (@media (min-width: 64rem) and (hover: hover) and (pointer: fine));
+
+/* Registered as utilities so variants work (e.g. `desktop:glass`). */
+@utility glass {
   background: rgba(26, 26, 30, 0.65);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.glass-light {
+@utility glass-light {
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
