@@ -21,7 +21,7 @@ const DEMOS = [
 
 export default function Home({ searchParams }: PageProps<"/">) {
   return (
-    <main className="relative mx-auto flex min-h-dvh max-w-md flex-col justify-between overflow-hidden bg-ink px-6 py-10 text-center desktop:grid desktop:max-w-none desktop:grid-cols-[minmax(0,1fr)_minmax(0,28rem)] desktop:grid-rows-[auto_auto] desktop:content-center desktop:gap-x-24 desktop:gap-y-10 desktop:px-[max(4rem,calc((100vw-72rem)/2))] desktop:text-left">
+    <main className="relative mx-auto flex min-h-dvh flex-col justify-between overflow-hidden bg-ink px-6 py-10 text-center desktop:grid desktop:max-w-none desktop:grid-cols-[minmax(0,1fr)_minmax(0,28rem)] desktop:grid-rows-[auto_auto] desktop:content-center desktop:gap-x-24 desktop:gap-y-10 desktop:px-[max(4rem,calc((100vw-72rem)/2))] desktop:text-left">
       <div aria-hidden className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-strava/30 blur-3xl desktop:h-[36rem] desktop:w-[36rem]" />
       <div aria-hidden className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-purple-600/20 blur-3xl desktop:h-[36rem] desktop:w-[36rem]" />
 

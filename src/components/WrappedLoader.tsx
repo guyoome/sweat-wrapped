@@ -55,7 +55,7 @@ export function WrappedLoader({ year, demo }: { year?: string; demo?: string }) 
   if (state.status === "ready") return <StoryPlayer data={state.data} />;
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-6 bg-ink px-6 text-center">
+    <main className="mx-auto flex min-h-dvh flex-col items-center justify-center gap-6 bg-ink px-6 text-center">
       {state.status === "loading" ? (
         <>
           <div className="h-16 w-16 animate-spin rounded-full border-4 border-white/10 border-t-strava" aria-hidden />

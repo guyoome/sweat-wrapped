@@ -36,13 +36,10 @@ body {
 }
 
 /*
- * Layout variants gated on a mouse/trackpad, so touch tablets (even ≥1024px
- * in landscape) keep the full-screen mobile display.
- * - framed:  phone-frame mockup for narrow desktop windows
- * - desktop: wide two-column layout
+ * Breakpoints: mobile and tablet (≤ 768px) share the full-width story
+ * display; `desktop` (> 768px) switches to the wide two-column layout.
  */
-@custom-variant framed (@media (min-width: 40rem) and (hover: hover) and (pointer: fine));
-@custom-variant desktop (@media (min-width: 64rem) and (hover: hover) and (pointer: fine));
+@custom-variant desktop (@media (width > 48rem));
 
 /* Registered as utilities so variants work (e.g. `desktop:glass`). */
 @utility glass {

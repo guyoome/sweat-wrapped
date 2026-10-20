@@ -96,7 +96,7 @@ export function StoryPlayer({ data }: { data: WrappedData }) {
 
   if (data.totals.activities === 0) {
     return (
-      <main className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-4 bg-ink p-6 text-center">
+      <main className="mx-auto flex min-h-dvh flex-col items-center justify-center gap-4 bg-ink p-6 text-center">
         <p className="text-5xl" aria-hidden>
           🛋️
         </p>
@@ -112,9 +112,9 @@ export function StoryPlayer({ data }: { data: WrappedData }) {
   const current = slides[index];
 
   return (
-    <main className="flex h-dvh flex-col items-center justify-center gap-3 bg-[#08080a] framed:p-4 desktop:p-8">
+    <main className="flex h-dvh flex-col items-center justify-center gap-3 bg-[#08080a] desktop:p-8">
       <div
-        className="relative h-full w-full max-w-md select-none overflow-hidden bg-ink shadow-2xl framed:h-[844px] framed:rounded-[40px] framed:border-8 framed:border-[#1E1E24] desktop:h-[min(760px,calc(100dvh-6rem))] desktop:max-w-6xl desktop:rounded-[32px] desktop:border desktop:border-white/10"
+        className="relative h-full w-full select-none overflow-hidden bg-ink shadow-2xl desktop:h-[min(760px,calc(100dvh-6rem))] desktop:max-w-6xl desktop:rounded-[32px] desktop:border desktop:border-white/10"
         role="region"
         aria-roledescription="carrousel"
         aria-label={`Récap ${data.year}`}
