@@ -63,7 +63,7 @@ async function Actions({ searchParams }: Pick<PageProps<"/">, "searchParams">) {
   const errorMessage = typeof error === "string" ? ERRORS[error] : undefined;
 
   return (
-    <section className="relative z-10 my-10 space-y-4 desktop:glass desktop:col-start-2 desktop:row-span-2 desktop:row-start-1 desktop:my-0 desktop:rounded-3xl desktop:p-8">
+    <section className="relative z-10 my-10 space-y-4 desktop:col-start-2 desktop:row-span-2 desktop:row-start-1 desktop:my-0">
       {errorMessage && (
         <p role="alert" className="rounded-2xl border border-red-500/40 bg-red-500/15 p-3 text-sm font-semibold text-red-200">
           {errorMessage}
