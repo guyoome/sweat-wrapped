@@ -18,6 +18,9 @@ const DEMOS = [
   { id: "marathoner", label: "Le Marathonien", emoji: "🏃" },
   { id: "trail", label: "La Traileuse", emoji: "⛰️" },
   { id: "commuter", label: "Le Vélotafeur", emoji: "🚲" },
+  { id: "triathlete", label: "La Triathlète", emoji: "🏊" },
+  { id: "swimmer", label: "Le Nageur", emoji: "🐬" },
+  { id: "duathlete", label: "Le Duathlète", emoji: "🚴" },
 ];
 
 export default function Home({ searchParams }: PageProps<"/">) {

@@ -5,7 +5,7 @@ import type { StravaAthlete, StravaSummaryActivity } from "../strava/types";
  * through exactly the same computeWrapped() pipeline as real data.
  */
 
-export const DEMO_PRESETS = ["marathoner", "trail", "commuter"] as const;
+export const DEMO_PRESETS = ["marathoner", "trail", "commuter", "triathlete", "swimmer", "duathlete"] as const;
 export type DemoPreset = (typeof DEMO_PRESETS)[number];
 
 interface Template {
@@ -19,6 +19,8 @@ interface Template {
   group?: number;
   trainer?: boolean;
   weekdaysOnly?: boolean;
+  /** Gear id used by this template; defaults to the preset's first gear, `null` for none. */
+  gear?: string | null;
   names: string[];
 }
 
@@ -71,6 +73,50 @@ const PRESETS: Record<DemoPreset, PresetConfig> = {
       { sport_type: "VirtualRide", weight: 1, km: [25, 40], speedKmh: [30, 34], dPlusPerKm: [5, 10], hours: [20, 22], trainer: true, names: ["Zwift – Watopia"] },
     ],
   },
+  triathlete: {
+    athlete: { firstname: "Inès", lastname: "Trimoteur", username: "ironines", city: "Nice" },
+    perWeek: 8,
+    kudos: [10, 40],
+    gear: [
+      { id: "g4", name: "Canyon Speedmax CF", kind: "bike" },
+      { id: "g5", name: "Asics Metaspeed Sky", kind: "shoes" },
+    ],
+    epic: { name: "IRONMAN 70.3 Nice 🏊🚴🏃", sport_type: "Ride", month: 5, distance: 90000, moving_time: 10800, total_elevation_gain: 1450, kudos_count: 188 },
+    templates: [
+      { sport_type: "Swim", weight: 3, km: [2, 3.5], speedKmh: [3, 3.8], dPlusPerKm: [0, 0], hours: [6, 7], gear: null, names: ["Bassin 20x100", "Endurance piscine", "Séance technique crawl"] },
+      { sport_type: "Swim", weight: 1, km: [1.5, 3], speedKmh: [3, 3.6], dPlusPerKm: [0, 0], hours: [7, 9], group: 0.5, gear: null, names: ["Eau libre à la Promenade", "Néoprène en mer"] },
+      { sport_type: "Ride", weight: 3, km: [40, 110], speedKmh: [27, 33], dPlusPerKm: [8, 16], hours: [8, 10], group: 0.3, gear: "g4", names: ["Sortie longue arrière-pays", "Col d'Èze", "Bloc vélo + enchaînement"] },
+      { sport_type: "VirtualRide", weight: 1, km: [30, 45], speedKmh: [32, 36], dPlusPerKm: [3, 8], hours: [19, 21], trainer: true, gear: "g4", names: ["Home trainer – sweet spot"] },
+      { sport_type: "Run", weight: 3, km: [6, 16], speedKmh: [11.5, 14], dPlusPerKm: [3, 10], hours: [6, 8], gear: "g5", names: ["Run enchaîné", "Fractionné piste", "Footing récup"] },
+    ],
+  },
+  swimmer: {
+    athlete: { firstname: "Nathan", lastname: "Dauphin", username: "nathanlongueur", city: "Marseille" },
+    perWeek: 5,
+    kudos: [4, 20],
+    gear: [],
+    epic: { name: "Défi de Monte-Cristo 🏝️", sport_type: "Swim", month: 5, distance: 5000, moving_time: 5700, total_elevation_gain: 0, kudos_count: 96 },
+    templates: [
+      { sport_type: "Swim", weight: 6, km: [2.5, 4.5], speedKmh: [3.2, 4], dPlusPerKm: [0, 0], hours: [6, 7], names: ["Bassin 50 m", "Pyramide 100-200-400", "Séries pull-buoy", "Endurance crawl"] },
+      { sport_type: "Swim", weight: 2, km: [2, 3], speedKmh: [3, 3.6], dPlusPerKm: [0, 0], hours: [12, 13], names: ["Natation pause dej'", "Technique dos & brasse"] },
+      { sport_type: "Swim", weight: 2, km: [1.5, 4], speedKmh: [2.8, 3.5], dPlusPerKm: [0, 0], hours: [8, 10], group: 0.6, names: ["Eau libre aux Catalans", "Traversée de la calanque"] },
+    ],
+  },
+  duathlete: {
+    athlete: { firstname: "Julien", lastname: "Bitume", username: "runbikerepeat", city: "Bordeaux" },
+    perWeek: 6,
+    kudos: [6, 28],
+    gear: [
+      { id: "g6", name: "Specialized Tarmac SL8", kind: "bike" },
+      { id: "g7", name: "Saucony Endorphin Speed 4", kind: "shoes" },
+    ],
+    epic: { name: "Duathlon de Bordeaux 🏃🚴", sport_type: "Ride", month: 8, distance: 80000, moving_time: 8400, total_elevation_gain: 650, kudos_count: 121 },
+    templates: [
+      { sport_type: "Run", weight: 4, km: [7, 18], speedKmh: [11, 14], dPlusPerKm: [2, 8], hours: [6, 8], group: 0.2, gear: "g7", names: ["Footing des quais", "Fractionné 6x1000", "Sortie longue", "Run brique"] },
+      { sport_type: "Ride", weight: 4, km: [40, 120], speedKmh: [26, 32], dPlusPerKm: [5, 12], hours: [8, 10], group: 0.45, gear: "g6", names: ["Boucle de l'Entre-deux-Mers", "Sortie club du dimanche", "Vélo vers le bassin d'Arcachon"] },
+      { sport_type: "VirtualRide", weight: 1, km: [25, 40], speedKmh: [30, 34], dPlusPerKm: [4, 8], hours: [19, 21], trainer: true, gear: "g6", names: ["Zwift – séance PMA"] },
+    ],
+  },
 };
 
 /** Small deterministic PRNG (mulberry32) so a preset always looks the same. */
@@ -90,7 +136,10 @@ export function isDemoPreset(value: string | undefined): value is DemoPreset {
 
 export function generateDemoYear(preset: DemoPreset, year: number, now = new Date()) {
   const cfg = PRESETS[preset];
-  const rand = rng(preset.length * 7919 + year);
+  // Seed from the preset name (FNV-1a) so each preset gets its own stream.
+  let seed = 2166136261;
+  for (const ch of preset) seed = Math.imul(seed ^ ch.charCodeAt(0), 16777619);
+  const rand = rng(seed + year);
   const between = ([min, max]: [number, number]) => min + rand() * (max - min);
   const pick = <T,>(items: T[]) => items[Math.floor(rand() * items.length)];
   const totalWeight = cfg.templates.reduce((s, t) => s + t.weight, 0);
@@ -137,7 +186,7 @@ export function generateDemoYear(preset: DemoPreset, year: number, now = new Dat
         photo_count: rand() < 0.15 ? 1 : 0,
         trainer: Boolean(tpl.trainer),
         commute: rand() < (tpl.commute ?? 0),
-        gear_id: km > 0 ? cfg.gear[0].id : null,
+        gear_id: km > 0 ? (tpl.gear !== undefined ? tpl.gear : (cfg.gear[0]?.id ?? null)) : null,
         average_speed: km > 0 ? (km * 1000) / moving : 0,
         max_speed: km > 0 ? ((km * 1000) / moving) * 1.6 : 0,
         average_heartrate: Math.round(between([135, 165])),
