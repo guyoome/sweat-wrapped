@@ -131,16 +131,17 @@ export function StoryPlayer({ data }: { data: WrappedData }) {
                 aria-label={`Aller à : ${s.label}`}
                 aria-current={i === index ? "step" : undefined}
               >
-                {i < index && <span className="block h-full w-full bg-white" />}
-                {i === index && (
+                {/* Final slide never auto-advances: show its bar as complete. */}
+                {(i < index || (i === index && current.final)) && <span className="block h-full w-full bg-white" />}
+                {i === index && !current.final && (
                   <span
                     key={`fill-${index}`}
                     className="story-fill block h-full w-full bg-white"
                     style={{
                       animationDuration: `${SLIDE_MS}ms`,
-                      animationPlayState: paused || current.final ? "paused" : "running",
+                      animationPlayState: paused ? "paused" : "running",
                     }}
-                    onAnimationEnd={() => !current.final && next()}
+                    onAnimationEnd={next}
                   />
                 )}
               </button>
