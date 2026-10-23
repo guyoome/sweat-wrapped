@@ -172,7 +172,7 @@ export function StoryPlayer({ data }: { data: WrappedData }) {
             return (
               <section
                 key={s.id}
-                className="slide no-scrollbar absolute inset-0 overflow-y-auto transition-transform duration-500 ease-out"
+                className="slide no-scrollbar absolute inset-0 overflow-x-hidden overflow-y-auto transition-transform duration-500 ease-out"
                 style={{ transform: `translateX(${(i - index) * 100}%)` }}
                 data-active={i === index}
                 aria-hidden={i !== index}
